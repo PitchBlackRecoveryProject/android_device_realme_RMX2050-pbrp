@@ -142,7 +142,6 @@ firmware_directories /vendor/firmware_mnt/image/
 /dev/sec_nvm_*            0660   system     system
 /dev/cryptoapp            0660   system     system
 /dev/spdaemon_ssr         0660   system     system
-/dev/spu_hal_ssr          0660   system     system
 /dev/iuicc                0660   system     system
 /dev/iuicc0               0660   system     system
 /dev/iuicc1               0660   system     system
@@ -168,13 +167,6 @@ firmware_directories /vendor/firmware_mnt/image/
 #qvr
 /dev/qvr_external_sensor_ioctl      0660  system  system
 /sys/kernel/qvr_external_sensor/fd  0660  system  system
-
-#ifdef VENDOR_EDIT
-#Qingwen.Liu@RM.BSP.Fingerprint.Basic. 2019/09/29, add for egis device
-/dev/esfp0                0660   system     system
-/sys/bus/platform/devices/egis_input navigation_enable 0660  system  system
-/sys/bus/platform/devices/egis_input navigation_event  0660  system  system
-#endif VENDOR_EDIT
 
 # wlan
 /dev/wcnss_wlan           0660   system     system
@@ -312,12 +304,6 @@ firmware_directories /vendor/firmware_mnt/image/
 /dev/nfc-nci              0660    nfc         nfc
 /dev/nq-nci               0660    nfc         nfc
 /dev/assd                 0660    nfc         nfc
-
-#ifdef VENDOR_EDIT
-#zhangfeng/W9005747@Connectivity.CN.NFC.BASIC.Hardware.2681315, 2020/03/02,
-/dev/cxd224x-i2c          0660    nfc         nfc
-/dev/cxd22xx-i2c          0660    nfc         nfc
-#end VENDOR_EDIT
 
 # UIO devices
 /dev/uio0                 0660   system     system
