@@ -23,21 +23,33 @@ DEVICE_PATH := device/realme/RMX2050
 
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 
 # Inherit some common Omni stuff.
 $(call inherit-product, vendor/pb/config/common.mk)
 
-PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(LOCAL_PATH)/recovery/root,recovery/root) \
-    $(LOCAL_PATH)/prebuilt/dtb:dtb.img
+PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(LOCAL_PATH)/recovery/root,recovery/root)
+	
+# Fastbootd
+PRODUCT_PACKAGES += \
+    android.hardware.fastboot@1.0-impl-mock \
+    android.hardware.fastboot@1.0-impl-mock.recovery
 
 # Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := RMX2050
 PRODUCT_NAME := omni_RMX2050
 PRODUCT_BRAND := realme
-PRODUCT_MODEL := Narzo 20A
+PRODUCT_MODEL := narzo 20a
 PRODUCT_MANUFACTURER := realme
-PRODUCT_RELEASE_NAME := realme Narzo 20A
 
 # HACK: Set vendor patch level
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.vendor.build.security_patch=2099-12-31
+
+PRODUCT_SYSTEM_PROPERTY_BLACKLIST += \
+    ro.bootimage.build.date.utc \
+    ro.build.date.utc
+
+# Dimen
+TARGET_SCREEN_HEIGHT := 1600
+TARGET_SCREEN_WIDTH := 720

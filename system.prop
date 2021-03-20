@@ -1,7 +1,7 @@
+ro.display.series=realme narzo 20a
 ro.product.board=trinket
 ro.board.platform=trinket
 sys.usb.controller=4e00000.dwc3
 persist.sys.isUsbOtgEnabled=true
 ro.boot.dynamic_partitions=true
 ro.adb.secure=0
-
