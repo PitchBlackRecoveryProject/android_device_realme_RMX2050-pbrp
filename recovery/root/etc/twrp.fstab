@@ -10,7 +10,6 @@ oppo_product		/oppo_product		ext4
 engineering		/engineering		ext4		
 common_preload		/common_preload		ext4		
 
-/super_image   emmc    /dev/block/bootdevice/by-name/super                       flags=backup=1;display="Super"
 /data          ext4    /dev/block/bootdevice/by-name/userdata                    flags=fileencryption=ice:aes-256-cts;wrappedkey
 /boot          emmc    /dev/block/bootdevice/by-name/boot
 /dtbo          emmc    /dev/block/bootdevice/by-name/dtbo                        flags=backup=1;display="Dtbo";flashimg=1
