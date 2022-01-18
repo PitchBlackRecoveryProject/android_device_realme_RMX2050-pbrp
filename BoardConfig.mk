@@ -49,20 +49,20 @@ TARGET_BOARD_PLATFORM_GPU := qcom-adreno610
 QCOM_BOARD_PLATFORMS += trinket
 
 # Kernel
-BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200n8 androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=1 earlycon=msm_geni_serial,0x4a90000 cgroup.memory=nokmem,nosocket buildvariant=user
-BOARD_KERNEL_IMAGE_NAME := kernel
+BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200n8 androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=1 earlycon=msm_geni_serial,0x4a90000 loop.max_part=7 cgroup.memory=nokmem,nosocket buildvariant=user
+BOARD_KERNEL_IMAGE_NAME := zImage.gz
 BOARD_KERNEL_PAGESIZE := 4096
 BOARD_BOOT_HEADER_VERSION := 2
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_TAGS_OFFSET := 0x00000100
 BOARD_KERNEL_OFFSET := 0x00008000
-BOARD_KERNEL_SECOND_OFFSET := 0x00f00000
+BOARD_KERNEL_SECOND_OFFSET := 0x00000000
 BOARD_RAMDISK_OFFSET := 0x01000000
 BOARD_DTB_OFFSET := 0x01f00000
 TARGET_KERNEL_ARCH := arm64
-TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb
-TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
-TARGET_PREBUILT_RECOVERY_DTBO := $(DEVICE_PATH)/prebuilt/dtbo
+TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
+TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/zImage.gz
+TARGET_PREBUILT_RECOVERY_DTBO := $(DEVICE_PATH)/prebuilt/dtbo.img
 #BOARD_INCLUDE_RECOVERY_DTBO := true
 #BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_MKBOOTIMG_ARGS += --base $(BOARD_KERNEL_BASE)
@@ -79,12 +79,14 @@ BOARD_MKBOOTIMG_ARGS += --recovery_dtbo $(TARGET_PREBUILT_RECOVERY_DTBO)
 # Assert
 TARGET_OTA_ASSERT_DEVICE := RMX2050
 
-# Avb
+#AVB
 BOARD_AVB_ENABLE := true
-BOARD_AVB_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
 
 # Partitions
-#BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 BOARD_FLASH_BLOCK_SIZE := 262144
 BOARD_BOOTIMAGE_PARTITION_SIZE := 67108864
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 100663296
@@ -93,7 +95,7 @@ BOARD_RECOVERYIMAGE_PARTITION_SIZE := 100663296
 BOARD_SUPER_PARTITION_SIZE := 7507804160
 BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
 BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 7507804160
-BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system vendor
+BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system system_ext product vendor odm
 
 # System as root
 BOARD_ROOT_EXTRA_FOLDERS := bluetooth dsp firmware persist
@@ -110,15 +112,20 @@ TARGET_COPY_OUT_VENDOR := vendor
 # Recovery
 BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
-
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery/root/system/etc/recovery.fstab
 
 # Crypto
-PLATFORM_SECURITY_PATCH := 2099-12-31
-VENDOR_SECURITY_PATCH := 2099-12-31
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_CRYPTO_FBE := true
 TW_INCLUDE_FBE_METADATA_DECRYPT := true
 BOARD_USES_METADATA_PARTITION := true
+BOARD_USES_QCOM_FBE_DECRYPTION := true
+TARGET_USES_HARDWARE_QCOM_BOOTCTRL := true
+
+# Hack: prevent anti rollback
+PLATFORM_SECURITY_PATCH := 2127-12-31
+VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
+PLATFORM_VERSION := 20.1.0
 
 # File systems
 BOARD_HAS_LARGE_FILESYSTEM := true
@@ -139,6 +146,7 @@ TW_INCLUDE_NTFS_3G := true
 TW_USE_TOOLBOX := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
 TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel0-backlight/brightness"
+TARGET_USE_CUSTOM_LUN_FILE_PATH := /config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file
 TW_MAX_BRIGHTNESS := 2047
 TW_DEFAULT_BRIGHTNESS := 1200
 TW_EXTRA_LANGUAGES := true
@@ -147,18 +155,15 @@ TARGET_USES_MKE2FS := true
 TW_EXCLUDE_TWRPAPP := true
 TW_NO_SCREEN_BLANK := true
 TW_SKIP_COMPATIBILITY_CHECK := true
+TW_INCLUDE_LOGICAL := my_product my_engineering common_preload special_preload
 TW_OZIP_DECRYPT_KEY := 0000
-
-# Debug
+TW_DEVICE_VERSION :=BY SIDDK
+TW_Y_OFFSET := 50
+TW_H_OFFSET := -50
+TW_INCLUDE_FUSE_EXFAT := true
+TW_INCLUDE_FUSE_NTFS := true
 TWRP_INCLUDE_LOGCAT := true
 TARGET_USES_LOGD := true
-
-# exFAT FS Support
-TW_INCLUDE_FUSE_EXFAT := true
-
-# NTFS Support
-TW_INCLUDE_FUSE_NTFS := true
-
-# PBRP Build Flags
-PB_DISABLE_DEFAULT_TREBLE_COMP := true
-PB_TORCH_PATH := "/sys/class/leds/led:torch_0"
+TW_EXLUCDE_APEX := true
+TW_OVERRIDE_SYSTEM_PROPS := \
+    "ro.build.date.utc;ro.build.product;ro.build.fingerprint=ro.system.build.fingerprint;ro.build.version.incremental;ro.product.device=ro.product.system.device;ro.product.model=ro.product.system.model;ro.product.name=ro.product.system.name"
